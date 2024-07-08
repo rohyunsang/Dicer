@@ -9,8 +9,8 @@ public static class GoogleSheetManager
     public static List<UnitData> unitDatas = new List<UnitData>();
 
     // 링크 뒤 edit ~ 부분을 빼고 export?format=tsv 추가하기
-    // origin url https://docs.google.com/spreadsheets/d/1Z_awcApNOODEqu---j7VFGDjjuyU5cl7IMinMXKHPII/edit?gid=0#gid=0
-    private const string unitDataURL = "https://docs.google.com/spreadsheets/d/1Z_awcApNOODEqu---j7VFGDjjuyU5cl7IMinMXKHPII/export?format=tsv"; 
+    // origin url https://docs.google.com/spreadsheets/d/1Z_awcApNODEqu---j7VFGDjjuyU5cl7IMinMXKHPII/edit?gid=0#gid=0
+    private const string unitDataURL = "https://docs.google.com/spreadsheets/d/1Z_awcApNODEqu---j7VFGDjjuyU5cl7IMinMXKHPII/export?format=tsv"; 
     public static IEnumerator Loader()
     {
         UnityWebRequest www = UnityWebRequest.Get(unitDataURL);
