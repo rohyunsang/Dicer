@@ -54,7 +54,8 @@ namespace Dicer.Fusion {
 
             if (_runner.IsSceneAuthority)
             {
-                _runner.LoadScene(SceneRef.FromIndex(SceneUtility.GetBuildIndexByScenePath(_battleScenePath)), LoadSceneMode.Additive);
+                // 
+                // _runner.LoadScene(SceneRef.FromIndex(SceneUtility.GetBuildIndexByScenePath(_battleScenePath)), LoadSceneMode.Additive);
             }
         }
 
