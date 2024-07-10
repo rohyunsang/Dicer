@@ -16,8 +16,12 @@ public class WarriorTest : MonoBehaviour
 
     void Update()
     {
-        Move(); // 매 프레임마다 이동 처리
         HandleAttack(); // 공격 처리
+    }
+
+    void FixedUpdate()
+    {
+        Move(); // 매 프레임마다 이동 처리
     }
 
     private void Move()
@@ -30,13 +34,11 @@ public class WarriorTest : MonoBehaviour
         // Rigidbody를 사용하여 위치 업데이트
         rb.velocity = moveVector * moveSpeed;
 
-        // 이동 애니메이션 처리
-        animator.SetFloat("Speed", moveVector.magnitude);
     }
 
     private void HandleAttack()
     {
-        if (Input.GetKeyDown(KeyCode.A)) // A 키를 눌렀을 때
+        if (Input.GetKeyDown(KeyCode.J)) // A 키를 눌렀을 때
         {
             animator.SetTrigger("Attack"); // Animator에서 Attack 트리거 활성화
         }
