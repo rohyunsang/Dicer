@@ -22,35 +22,67 @@ public static class GoogleSheetManager
         ParseUnitData(data);
     }
 
-    
+
     private static void ParseUnitData(string data)
     {
         string[] lines = data.Split('\n');
-        for (int i = 1; i < lines.Length; i++) // first line is data type
+        for (int i = 1; i < lines.Length; i++) // 첫 번째 행은 제목 행으로 생략
         {
             string[] fields = lines[i].Split('\t');
-            if (fields.Length >= 13) // enough field checking 
+            if (fields.Length < 14) // 필요한 필드 수 미달 시 로그 출력 및 처리 중단
+            {
+                Debug.LogError($"Line {i} has insufficient fields: {fields.Length} fields found.");
+                continue;
+            }
+
+            try
             {
                 UnitData unitData = new UnitData()
                 {
-                    Index = int.Parse(fields[0]),
+                    Index = ParseInt(fields[0]),
                     Name = fields[1],
-                    Grade = int.Parse(fields[2]),
-                    Class = int.Parse(fields[3]),
-                    HP = float.Parse(fields[4]),
-                    MP = float.Parse(fields[5]),
-                    AttackPower = float.Parse(fields[6]),
-                    Defense = float.Parse(fields[7]),
-                    AttackSpeed = float.Parse(fields[8]),
-                    MoveSpeed = float.Parse(fields[9]),
-                    AttackRange = float.Parse(fields[10]),
-                    Cost = int.Parse(fields[11]),
+                    Grade = ParseInt(fields[2]),
+                    Class = ParseInt(fields[3]),
+                    HP = ParseFloat(fields[4]),
+                    MP = ParseFloat(fields[5]),
+                    AttackPower = ParseFloat(fields[6]),
+                    Defense = ParseFloat(fields[7]),
+                    AttackSpeed = ParseFloat(fields[8]),
+                    MoveSpeed = ParseFloat(fields[9]),
+                    AttackRange = ParseFloat(fields[10]),
+                    Cost = ParseInt(fields[11]),
                     KRName = fields[12],
                     DesText = fields[13],
                 };
                 unitDatas.Add(unitData);
             }
+            catch (FormatException e)
+            {
+                Debug.LogError($"FormatException on line {i}: {e.Message}");
+            }
+            catch (OverflowException e)
+            {
+                Debug.LogError($"OverflowException on line {i}: {e.Message}");
+            }
         }
+    }
+
+    private static int ParseInt(string input)
+    {
+        if (int.TryParse(input, out int result))
+        {
+            return result;
+        }
+        throw new FormatException($"Unable to parse '{input}' as integer.");
+    }
+
+    private static float ParseFloat(string input)
+    {
+        if (float.TryParse(input, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out float result))
+        {
+            return result;
+        }
+        throw new FormatException($"Unable to parse '{input}' as float.");
     }
 }
 
@@ -61,6 +93,7 @@ public class UnitData
     public string Name;
     public int Grade;
     public int Class;
+    public int Cost;
     public float HP;
     public float MP;
     public float AttackPower;
@@ -68,7 +101,6 @@ public class UnitData
     public float AttackSpeed;
     public float MoveSpeed;
     public float AttackRange;
-    public int Cost;
     public string KRName;
     public string DesText;
 }

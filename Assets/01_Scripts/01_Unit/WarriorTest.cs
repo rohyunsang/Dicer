@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Fusion;
 
 public class WarriorTest : MonoBehaviour
 {
@@ -26,6 +27,7 @@ public class WarriorTest : MonoBehaviour
 
     private void Move()
     {
+
         // WASD 입력에 따라 벡터 생성
         float moveX = Input.GetAxisRaw("Horizontal");
         float moveY = Input.GetAxisRaw("Vertical");

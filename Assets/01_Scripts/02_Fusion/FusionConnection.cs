@@ -20,7 +20,11 @@ namespace Dicer.Fusion {
 
         public bool connectOnAwake = false;
         [HideInInspector] public NetworkRunner _runner = null;
+        [SerializeField] private string _mainScenePath = "";
         [SerializeField] private string _battleScenePath = "";
+        [SerializeField] private string _battleTestScenePath = "";
+
+        [SerializeField] NetworkObject _commanderPrefab;
 
         private void Awake()
         {
@@ -55,13 +59,16 @@ namespace Dicer.Fusion {
             if (_runner.IsSceneAuthority)
             {
                 // 
-                // _runner.LoadScene(SceneRef.FromIndex(SceneUtility.GetBuildIndexByScenePath(_battleScenePath)), LoadSceneMode.Additive);
+                _runner.LoadScene(SceneRef.FromIndex(SceneUtility.GetBuildIndexByScenePath(_battleTestScenePath)), LoadSceneMode.Additive);
             }
         }
 
         public void OnConnectedToServer(NetworkRunner runner)
         {
             Debug.Log("OnConnectedToServer");
+            NetworkObject commanderObject = _runner.Spawn(_commanderPrefab, Vector3.zero);
+
+            _runner.SetPlayerObject(runner.LocalPlayer, commanderObject); // Commander Object Set PlayerObject
         }
 
         public void OnConnectFailed(NetworkRunner runner, NetAddress remoteAddress, NetConnectFailedReason reason)
