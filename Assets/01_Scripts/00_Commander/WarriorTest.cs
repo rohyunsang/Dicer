@@ -2,17 +2,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Fusion;
+using Fusion.Addons.Physics;
 
-public class WarriorTest : MonoBehaviour
+public class WarriorTest : NetworkBehaviour
 {
     public float moveSpeed = 5.0f; // 이동 속도
-    private Rigidbody2D rb; // Rigidbody2D 컴포넌트
-    private Animator animator; // Animator 컴포넌트
+    private NetworkRigidbody2D _rigid;  // Fusion.Addons.Physics
+    private Animator _animator; // Animator 컴포넌트
+
+    [Networked]
+    public int PlayerID { get; private set; }
 
     void Start()
     {
-        rb = GetComponent<Rigidbody2D>(); // Rigidbody2D 컴포넌트 가져오기
-        animator = GetComponent<Animator>(); // Animator 컴포넌트 가져오기
+        _rigid = GetComponent<NetworkRigidbody2D>(); // Rigidbody2D 컴포넌트 가져오기
+        _animator = GetComponent<Animator>(); // Animator 컴포넌트 가져오기
     }
 
     void Update()
@@ -34,7 +38,7 @@ public class WarriorTest : MonoBehaviour
         Vector2 moveVector = new Vector2(moveX, moveY).normalized; // 정규화하여 대각선 이동 속도 일정하게 처리
 
         // Rigidbody를 사용하여 위치 업데이트
-        rb.velocity = moveVector * moveSpeed;
+        // _rigid.velocity = moveVector * moveSpeed;
 
     }
 
@@ -42,7 +46,7 @@ public class WarriorTest : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.J)) // A 키를 눌렀을 때
         {
-            animator.SetTrigger("Attack"); // Animator에서 Attack 트리거 활성화
+            _animator.SetTrigger("Attack"); // Animator에서 Attack 트리거 활성화
         }
     }
 }

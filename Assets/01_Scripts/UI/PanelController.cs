@@ -12,7 +12,6 @@ public enum PanelType
 }
 
 
-[ExecuteInEditMode]
 public class PanelController : MonoBehaviour
 {
     [SerializeField] private List<RectTransform> panels;
