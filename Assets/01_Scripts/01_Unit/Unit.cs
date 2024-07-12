@@ -42,16 +42,17 @@ public class Unit : MonoBehaviour, IUnitStats
         DesText = data.DesText;
     }
 
-    protected void MoveToTarget()
+    protected virtual void MoveToTarget()
     {
 
     }
 
-    protected void Attack()
+    protected virtual bool Attack()
     {
+        return false;
     }
 
-    protected void Die()
+    protected virtual void Die()
     {
     }
 
@@ -85,5 +86,10 @@ public class Unit : MonoBehaviour, IUnitStats
                 Debug.LogError("Invalid stat name: " + statName);
                 break;
         }
+    }
+
+    public void DestroySelf()
+    {
+        Destroy(this.gameObject);
     }
 }
