@@ -3,7 +3,6 @@ using Fusion;
 using NetworkRigidbody2D = Fusion.Addons.Physics.NetworkRigidbody2D;
 using static UnityEngine.EventSystems.PointerEventData;
 
- 
 public class PlayerRigidBodyMovement : NetworkBehaviour
 {
     [Header("Movement")]
@@ -18,21 +17,10 @@ public class PlayerRigidBodyMovement : NetworkBehaviour
 
     [SerializeField] private float fallMultiplier = 3.3f;
     [SerializeField] private float lowJumpMultiplier = 2f;
-    private readonly float wallSlidingMultiplier = 1f;
 
     private Vector2 _groundHorizontalDragVector = new Vector2(.1f, 1);
     private Vector2 _airHorizontalDragVector = new Vector2(.98f, 1);
-    private Vector2 _horizontalSpeedReduceVector = new Vector2(.95f, 1);
-    private Vector2 _verticalSpeedReduceVector = new Vector2(1, .95f);
 
-    private Collider2D _collider;
-    [Networked]
-    private NetworkBool IsGrounded { get; set; }
-    private bool _wallSliding;
-    private Vector2 _wallSlidingNormal;
-
-    private float _jumpBufferThreshold = .2f;
-    private float _jumpBufferTime;
 
     [Networked]
     private float CoyoteTimeThreshold { get; set; } = .1f;
@@ -48,70 +36,25 @@ public class PlayerRigidBodyMovement : NetworkBehaviour
     void Awake()
     {
         _rb = GetComponent<NetworkRigidbody2D>();
-        _collider = GetComponentInChildren<Collider2D>();
         _behaviour = GetBehaviour<PlayerBehaviour>();
     }
 
     public override void Spawned()
     {
-        Runner.SetPlayerAlwaysInterested(Object.InputAuthority, Object, true);
+        // Runner.SetPlayerAlwaysInterested(Object.InputAuthority, Object, true);
     }
 
     /// <summary>
     /// Detects grounded and wall sliding state
     /// </summary>
-    private void DetectGroundAndWalls()
-    {
-        WasGrounded = IsGrounded;
-        IsGrounded = default;
-        _wallSliding = default;
-
-        IsGrounded = (bool)Runner.GetPhysicsScene2D().OverlapBox((Vector2)transform.position + Vector2.down * (_collider.bounds.extents.y - .3f), Vector2.one * .85f, 0, _groundLayer);
-        if (IsGrounded)
-        {
-            CoyoteTimeCD = false;
-            return;
-        }
-
-        if (WasGrounded)
-        {
-            if (CoyoteTimeCD)
-            {
-                CoyoteTimeCD = false;
-            }
-            else
-            {
-                TimeLeftGrounded = Runner.SimulationTime;
-            }
-        }
-
-        _wallSliding = Runner.GetPhysicsScene2D().OverlapCircle(transform.position + Vector3.right * (_collider.bounds.extents.x), .1f, _groundLayer);
-        if (_wallSliding)
-        {
-            _wallSlidingNormal = Vector2.left;
-            return;
-        }
-        else
-        {
-            _wallSliding = Runner.GetPhysicsScene2D().OverlapCircle(transform.position - Vector3.right * (_collider.bounds.extents.x), .1f, _groundLayer);
-            if (_wallSliding)
-            {
-                _wallSlidingNormal = Vector2.right;
-            }
-        }
-
-    }
-
-    public bool GetGrounded()
-    {
-        return IsGrounded;
-    }
 
     public override void FixedUpdateNetwork()
     {
         if (GetInput<InputData>(out var input))
         {
+            Debug.Log(input);
             var pressed = input.GetButtonPressed(_inputController.PrevButtons);
+            // pressed -> will using Jump, Attack ..etc :: Fix
             _inputController.PrevButtons = input.Buttons;
             UpdateMovement(input);
         }
@@ -121,12 +64,11 @@ public class PlayerRigidBodyMovement : NetworkBehaviour
 
     void UpdateMovement(InputData input)
     {
-        DetectGroundAndWalls();
-
+        Debug.Log(input);
         if (input.GetButton(InputButton.LEFT) && _behaviour.InputsAllowed)
         {
-            //Reset x velocity if start moving in oposite direction.
-            if (_rb.Rigidbody.velocity.x > 0 && IsGrounded)
+            //Reset x velocity if start moving in opposite direction.
+            if (_rb.Rigidbody.velocity.x > 0)
             {
                 _rb.Rigidbody.velocity *= Vector2.up;
             }
@@ -134,8 +76,8 @@ public class PlayerRigidBodyMovement : NetworkBehaviour
         }
         else if (input.GetButton(InputButton.RIGHT) && _behaviour.InputsAllowed)
         {
-            //Reset x velocity if start moving in oposite direction.
-            if (_rb.Rigidbody.velocity.x < 0 && IsGrounded)
+            //Reset x velocity if start moving in opposite direction.
+            if (_rb.Rigidbody.velocity.x < 0 )
             {
                 _rb.Rigidbody.velocity *= Vector2.up;
             }
@@ -143,28 +85,29 @@ public class PlayerRigidBodyMovement : NetworkBehaviour
         }
         else
         {
-            //Different horizontal drags depending if grounded or not.
-            if (IsGrounded)
-                _rb.Rigidbody.velocity *= _groundHorizontalDragVector;
-            else
-                _rb.Rigidbody.velocity *= _airHorizontalDragVector;
         }
 
-        LimitSpeed();
-    }
-
-    private void LimitSpeed()
-    {
-        //Limit horizontal velocity
-        if (Mathf.Abs(_rb.Rigidbody.velocity.x) > _maxVelocity)
+        // Adding vertical movement
+        if (input.GetButton(InputButton.UP) && _behaviour.InputsAllowed)
         {
-            _rb.Rigidbody.velocity *= _horizontalSpeedReduceVector;
+            //Reset y velocity if start moving in opposite direction.
+            if (_rb.Rigidbody.velocity.y < 0)
+            {
+                _rb.Rigidbody.velocity *= Vector2.right;
+            }
+            _rb.Rigidbody.AddForce(Vector2.up * _speed * Runner.DeltaTime, ForceMode2D.Force);
         }
-
-        if (Mathf.Abs(_rb.Rigidbody.velocity.y) > _maxVelocity * 2)
+        else if (input.GetButton(InputButton.DOWN) && _behaviour.InputsAllowed)
         {
-            _rb.Rigidbody.velocity *= _verticalSpeedReduceVector;
+            //Reset y velocity if start moving in opposite direction.
+            if (_rb.Rigidbody.velocity.y > 0)
+            {
+                _rb.Rigidbody.velocity *= Vector2.right;
+            }
+            _rb.Rigidbody.AddForce(Vector2.down * _speed * Runner.DeltaTime, ForceMode2D.Force);
+        }
+        else
+        {
         }
     }
-
 }
