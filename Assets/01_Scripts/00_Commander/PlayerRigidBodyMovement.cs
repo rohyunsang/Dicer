@@ -12,24 +12,10 @@ public class PlayerRigidBodyMovement : NetworkBehaviour
     private InputController _inputController;
 
     [SerializeField] float _speed = 10f;
-    [SerializeField] float _jumpForce = 10f;
     [SerializeField] float _maxVelocity = 8f;
 
     [SerializeField] private float fallMultiplier = 3.3f;
     [SerializeField] private float lowJumpMultiplier = 2f;
-
-    private Vector2 _groundHorizontalDragVector = new Vector2(.1f, 1);
-    private Vector2 _airHorizontalDragVector = new Vector2(.98f, 1);
-
-
-    [Networked]
-    private float CoyoteTimeThreshold { get; set; } = .1f;
-    [Networked]
-    private float TimeLeftGrounded { get; set; }
-    [Networked]
-    private NetworkBool CoyoteTimeCD { get; set; }
-    [Networked]
-    private NetworkBool WasGrounded { get; set; }
 
     [Networked] public Vector3 Velocity { get; set; }
 
@@ -37,11 +23,12 @@ public class PlayerRigidBodyMovement : NetworkBehaviour
     {
         _rb = GetComponent<NetworkRigidbody2D>();
         _behaviour = GetBehaviour<PlayerBehaviour>();
+        _inputController = GetBehaviour<InputController>();
     }
 
     public override void Spawned()
     {
-        // Runner.SetPlayerAlwaysInterested(Object.InputAuthority, Object, true);
+        Runner.SetPlayerAlwaysInterested(Object.InputAuthority, Object, true);
     }
 
     /// <summary>
@@ -52,7 +39,6 @@ public class PlayerRigidBodyMovement : NetworkBehaviour
     {
         if (GetInput<InputData>(out var input))
         {
-            Debug.Log(input);
             var pressed = input.GetButtonPressed(_inputController.PrevButtons);
             // pressed -> will using Jump, Attack ..etc :: Fix
             _inputController.PrevButtons = input.Buttons;
@@ -64,7 +50,14 @@ public class PlayerRigidBodyMovement : NetworkBehaviour
 
     void UpdateMovement(InputData input)
     {
-        Debug.Log(input);
+        // : Fix
+        // Debug
+        if(input.GetButton(InputButton.LEFT))
+            Debug.Log("input LEFT " + input.GetButton(InputButton.LEFT));
+        if(_behaviour.InputsAllowed)
+            Debug.Log("InputAllowed " + _behaviour.InputsAllowed);
+
+
         if (input.GetButton(InputButton.LEFT) && _behaviour.InputsAllowed)
         {
             //Reset x velocity if start moving in opposite direction.
@@ -105,9 +98,6 @@ public class PlayerRigidBodyMovement : NetworkBehaviour
                 _rb.Rigidbody.velocity *= Vector2.right;
             }
             _rb.Rigidbody.AddForce(Vector2.down * _speed * Runner.DeltaTime, ForceMode2D.Force);
-        }
-        else
-        {
         }
     }
 }

@@ -12,6 +12,7 @@ public class LevelManager : NetworkSceneManagerDefault
     private Scene _loadedScene;
 
     public void ResetLoadedScene()
+
     {
         _loadingManager.ResetLastLevelsIndex();
         _loadedScene = default;

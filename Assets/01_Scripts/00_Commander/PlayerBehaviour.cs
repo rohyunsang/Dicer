@@ -46,19 +46,23 @@ public class PlayerBehaviour : NetworkBehaviour
         if (Object.HasInputAuthority)
         {
             CameraManager camera = FindObjectOfType<CameraManager>();
-            camera.CameraTarget = CameraTransform;
+            // camera.CameraTarget = CameraTransform;
 
         }
     }
-
-    [Rpc(sources: RpcSources.InputAuthority, targets: RpcTargets.StateAuthority)]
+    /*
+       [Rpc(sources: RpcSources.InputAuthority, targets: RpcTargets.StateAuthority)]
     public void RPC_SetNickname(string nick)
     {
         Nickname = nick;
     }
+     */
+
+
 
     public void SetInputsAllowed(bool value)
     {
+        Debug.Log("isRun SetInputsAllowed");
         InputsAllowed = value;
     }
 
@@ -76,8 +80,8 @@ public class PlayerBehaviour : NetworkBehaviour
 
     public override void FixedUpdateNetwork()
     {
-
-        if (GetInput<InputData>(out var input) && InputsAllowed)
+        /*
+         if (GetInput<InputData>(out var input) && InputsAllowed)
         {
             if (input.GetButtonPressed(_inputController.PrevButtons).IsSet(InputButton.RESPAWN) && !Respawning)
             {
@@ -93,6 +97,8 @@ public class PlayerBehaviour : NetworkBehaviour
                 StartCoroutine(Respawn());
             }
         }
+         */
+
 
     }
 
