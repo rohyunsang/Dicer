@@ -12,8 +12,6 @@ public class LoadingManager : MonoBehaviour
 {
     public static LoadingManager Instance;
 
-    [SerializeField] private Animator _loadingScreenAnimator;
-
     private int _lastLevelIndex;
 
     void Awake()
@@ -53,13 +51,4 @@ public class LoadingManager : MonoBehaviour
         runner.LoadScene(scenePath);
     }
 
-    public void StartLoadingScreen()
-    {
-        _loadingScreenAnimator.Play("In");
-    }
-
-    public void FinishLoadingScreen()
-    {
-        _loadingScreenAnimator.Play("Out");
-    }
 }
