@@ -18,6 +18,7 @@ public class BattleStageBehaviour : NetworkBehaviour
     public override void Spawned()
     {
         FindObjectOfType<PlayerSpawner>().RespawnPlayers(Runner);
+        //FindObjectOfType<NormalUintSpawner>().SpawnUnit(Runner);
         StartStage();
     }
 
@@ -30,6 +31,7 @@ public class BattleStageBehaviour : NetworkBehaviour
 
     public override void FixedUpdateNetwork()
     {
+        Debug.Log(Id);
         if (StartTimer.Expired(Runner))
         {
             StageTimer = TickTimer.CreateFromSeconds(Runner, _stageTime);
@@ -42,7 +44,7 @@ public class BattleStageBehaviour : NetworkBehaviour
         }
     }
 
-    private void SetStartWaitingTime()  // 시작 대기 시간 5초 설정
+    private void SetStartWaitingTime()  // ???? ???? ???? 5?? ????
     {
         StartTimer = TickTimer.CreateFromSeconds(Runner, 5);
     }

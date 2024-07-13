@@ -53,9 +53,9 @@ public class PlayerRigidBodyMovement : NetworkBehaviour
         // : Fix
         // Debug
         if(input.GetButton(InputButton.LEFT))
-            Debug.Log("input LEFT " + input.GetButton(InputButton.LEFT));
+            //Debug.Log("input LEFT " + input.GetButton(InputButton.LEFT));
         if(_behaviour.InputsAllowed)
-            Debug.Log("InputAllowed " + _behaviour.InputsAllowed);
+            //Debug.Log("InputAllowed " + _behaviour.InputsAllowed);
 
 
         if (input.GetButton(InputButton.LEFT) && _behaviour.InputsAllowed)

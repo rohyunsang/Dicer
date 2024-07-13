@@ -62,7 +62,7 @@ public class PlayerBehaviour : NetworkBehaviour
 
     public void SetInputsAllowed(bool value)
     {
-        Debug.Log("isRun SetInputsAllowed");
+        //Debug.Log("isRun SetInputsAllowed");
         InputsAllowed = value;
     }
 
